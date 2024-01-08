@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .models import Post
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib import messages
 
 # Create your views here.
 # How we want to handle server routes
@@ -34,6 +35,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        messages.success(self.request,f"Post Created Successfully!")
         return super().form_valid(form)
 
 
@@ -44,6 +46,7 @@ class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        messages.success(self.request, f"Post Updated Successfully!")
         return super().form_valid(form)
 
     def test_func(self):
@@ -61,6 +64,10 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+    def form_valid(self,form):
+        messages.success(self.request,f"Post Deleted Successfully!")
+        return super().form_valid(form)
 
 
 def about(request):
